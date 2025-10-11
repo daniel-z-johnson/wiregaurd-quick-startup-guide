@@ -1,7 +1,7 @@
 # wireguard-quick-startup-guide
 
 ## Server Setup
-1. Get a server, services you can use include Linode, Digital Ocean, Vultr, and many others
+1. Get a server, services you can use include Linode, Digital Ocean, and many others
 2. You only need a very small server, I chose the cheapest one that was only $5 a month when I did my setup and it worked fine
 3. I used Ubuntu for my OS (Ubuntu 20.04 or later recommended)
 4. __Secure the Server__, look at a guide to do this, it includes updating, setting up auto update, preventing root login, no password login, and many other steps
