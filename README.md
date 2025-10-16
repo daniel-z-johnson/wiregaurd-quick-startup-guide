@@ -9,9 +9,11 @@
   `sudo apt update && sudo apt install wireguard`
 6. Enable IP forwarding
     1. Edit sysctl configuration: `sudo vim /etc/sysctl.conf`
-    2. Uncomment these lines to enable packet forwarding (remove the `#` at the beginning)
-         - `net.ipv6.conf.all.forwarding=1`
-         - `net.ipv4.ip_forward=1`
+    2. Run the following
+         ```
+         echo net.ipv4.ip_forward=1 | tee -a /etc/sysctl.conf
+         echo net.ipv6.conf.all.forwarding=1 | tee -a /etc/sysctl.conf
+         ```
     3. Apply the changes: `sudo sysctl -p`
 7. Generate private and public keys for WireGuard:<br>
 `sudo wg genkey | sudo tee /etc/wireguard/privatekey | sudo wg pubkey | sudo tee /etc/wireguard/publickey`
