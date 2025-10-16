@@ -95,4 +95,4 @@ sudo systemctl enable wg-quick@wg0
 #### AWS ens5
 - `eth0` may not be the network interface
 - Run `ip link show` to see the network interfaces, it may be something like `ens5`
-- in `wg0.conf` replace `eth0` with `ens5`
+- In `wg0.conf` replace `eth0` with `ens5`
