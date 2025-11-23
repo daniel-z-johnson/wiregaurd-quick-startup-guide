@@ -10,7 +10,7 @@ For a quick and easy setup, use the provided automation script:
 3. __Secure the Server__ first - follow a server hardening guide
 4. Download and run the setup script:
    ```bash
-   wget https://raw.githubusercontent.com/daniel-z-johnson/wiregaurd-quick-startup-guide/main/setup-wireguard.sh
+   wget https://raw.githubusercontent.com/daniel-z-johnson/wireguard-quick-startup-guide/main/setup-wireguard.sh
    chmod +x setup-wireguard.sh
    sudo ./setup-wireguard.sh
    ```

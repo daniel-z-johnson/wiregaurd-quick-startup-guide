@@ -54,8 +54,9 @@ mkdir -p /etc/wireguard
 # Generate private and public keys
 wg genkey | tee /etc/wireguard/privatekey | wg pubkey | tee /etc/wireguard/publickey > /dev/null
 
-# Set appropriate permissions on the private key
+# Set appropriate permissions on the private and public keys
 chmod 600 /etc/wireguard/privatekey
+chmod 600 /etc/wireguard/publickey
 
 echo -e "${GREEN}Keys generated successfully${NC}"
 echo -e "Private key saved to: /etc/wireguard/privatekey (permissions set to 600)"
@@ -73,14 +74,24 @@ echo -e "${YELLOW}Step 4: Creating WireGuard configuration file (wg0.conf)...${N
 
 PRIVATE_KEY=$(cat /etc/wireguard/privatekey)
 
+# Detect the default network interface
+DEFAULT_INTERFACE=$(ip route | grep default | awk '{print $5}' | head -n1)
+if [ -z "$DEFAULT_INTERFACE" ]; then
+    DEFAULT_INTERFACE="eth0"
+    echo -e "${YELLOW}Warning: Could not detect default network interface, using eth0${NC}"
+    echo -e "${YELLOW}If your interface is different, edit /etc/wireguard/wg0.conf and replace eth0${NC}"
+else
+    echo -e "Detected default network interface: ${DEFAULT_INTERFACE}"
+fi
+
 # Create wg0.conf with the private key
 cat > /etc/wireguard/wg0.conf << EOF
 [Interface]
 Address = 10.0.0.1/24, fd86:ea04:1111::1/64
 ListenPort = 51820
 PrivateKey = ${PRIVATE_KEY}
-PostUp = iptables -A FORWARD -i %i -j ACCEPT; iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE; ip6tables -A FORWARD -i %i -j ACCEPT; ip6tables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
-PostDown = iptables -D FORWARD -i %i -j ACCEPT; iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE; ip6tables -D FORWARD -i %i -j ACCEPT; ip6tables -t nat -D POSTROUTING -o eth0 -j MASQUERADE
+PostUp = iptables -A FORWARD -i %i -j ACCEPT; iptables -t nat -A POSTROUTING -o ${DEFAULT_INTERFACE} -j MASQUERADE; ip6tables -A FORWARD -i %i -j ACCEPT; ip6tables -t nat -A POSTROUTING -o ${DEFAULT_INTERFACE} -j MASQUERADE
+PostDown = iptables -D FORWARD -i %i -j ACCEPT; iptables -t nat -D POSTROUTING -o ${DEFAULT_INTERFACE} -j MASQUERADE; ip6tables -D FORWARD -i %i -j ACCEPT; ip6tables -t nat -D POSTROUTING -o ${DEFAULT_INTERFACE} -j MASQUERADE
 
 # Add [Peer] sections below for each client
 # Example:
@@ -97,8 +108,16 @@ echo ""
 
 # Enable IP forwarding
 echo -e "${YELLOW}Enabling IP forwarding...${NC}"
-echo "net.ipv4.ip_forward=1" >> /etc/sysctl.conf
-echo "net.ipv6.conf.all.forwarding=1" >> /etc/sysctl.conf
+
+# Check if IP forwarding settings already exist in sysctl.conf
+if ! grep -q "^net.ipv4.ip_forward=1" /etc/sysctl.conf; then
+    echo "net.ipv4.ip_forward=1" >> /etc/sysctl.conf
+fi
+
+if ! grep -q "^net.ipv6.conf.all.forwarding=1" /etc/sysctl.conf; then
+    echo "net.ipv6.conf.all.forwarding=1" >> /etc/sysctl.conf
+fi
+
 sysctl -p > /dev/null
 
 echo -e "${GREEN}IP forwarding enabled${NC}"
