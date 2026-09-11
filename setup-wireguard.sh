@@ -63,7 +63,7 @@ if [[ "$IPV6_MODE" != disabled ]]; then
     for probe in '2606:4700:4700::1111' '2001:4860:4860::8888'; do
         if candidate=$(ip -6 route get "$probe" 2>/dev/null | awk '{for (i=1;i<=NF;i++) if ($i=="dev") {print $(i+1); exit}}') &&
            [[ "$candidate" =~ ^[a-zA-Z0-9_.:-]+$ ]] &&
-           curl --disable --ipv6 --noproxy '*' --interface "$candidate" \
+           curl --ipv6 --noproxy '*' --interface "$candidate" \
                 --connect-timeout 5 --max-time 10 --fail --silent --output /dev/null \
                 "https://[$probe]/"; then
             IPV6_INTERFACE=$candidate
