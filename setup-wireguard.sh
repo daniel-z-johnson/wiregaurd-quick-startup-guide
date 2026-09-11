@@ -108,9 +108,9 @@ if $IPV6; then
 PostUp = ip6tables -I FORWARD 1 -i %i -o $IPV6_INTERFACE -s fd86:ea04:1111::/64 -j ACCEPT
 PostUp = ip6tables -I FORWARD 1 -i $IPV6_INTERFACE -o %i -d fd86:ea04:1111::/64 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 PostUp = ip6tables -t nat -A POSTROUTING -s fd86:ea04:1111::/64 -o $IPV6_INTERFACE -j MASQUERADE
-PostDown = ip6tables -D FORWARD -i %i -o $IPV6_INTERFACE -s fd86:ea04:1111::/64 -j ACCEPT
-PostDown = ip6tables -D FORWARD -i $IPV6_INTERFACE -o %i -d fd86:ea04:1111::/64 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
-PostDown = ip6tables -t nat -D POSTROUTING -s fd86:ea04:1111::/64 -o $IPV6_INTERFACE -j MASQUERADE
+PostDown = ip6tables -D FORWARD -i %i -o $IPV6_INTERFACE -s fd86:ea04:1111::/64 -j ACCEPT || true
+PostDown = ip6tables -D FORWARD -i $IPV6_INTERFACE -o %i -d fd86:ea04:1111::/64 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT || true
+PostDown = ip6tables -t nat -D POSTROUTING -s fd86:ea04:1111::/64 -o $IPV6_INTERFACE -j MASQUERADE || true
 EOF
 fi
 printf '\n# Append one [Peer] section per client; see README.md.\n' >> /etc/wireguard/wg0.conf
