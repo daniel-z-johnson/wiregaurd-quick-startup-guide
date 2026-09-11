@@ -1,6 +1,7 @@
 #!/bin/bash
 # Initial WireGuard server setup for Ubuntu. Run with sudo.
 set -euo pipefail
+set -o noclobber
 umask 077
 
 UPGRADE=false
