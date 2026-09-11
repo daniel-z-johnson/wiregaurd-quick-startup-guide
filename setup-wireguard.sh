@@ -98,9 +98,9 @@ PrivateKey = $PRIVATE_KEY
 PostUp = iptables -I FORWARD 1 -i %i -o $WAN_INTERFACE -s 10.0.0.0/24 -j ACCEPT
 PostUp = iptables -I FORWARD 1 -i $WAN_INTERFACE -o %i -d 10.0.0.0/24 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 PostUp = iptables -t nat -A POSTROUTING -s 10.0.0.0/24 -o $WAN_INTERFACE -j MASQUERADE
-PostDown = iptables -D FORWARD -i %i -o $WAN_INTERFACE -s 10.0.0.0/24 -j ACCEPT
-PostDown = iptables -D FORWARD -i $WAN_INTERFACE -o %i -d 10.0.0.0/24 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
-PostDown = iptables -t nat -D POSTROUTING -s 10.0.0.0/24 -o $WAN_INTERFACE -j MASQUERADE
+PostDown = iptables -D FORWARD -i %i -o $WAN_INTERFACE -s 10.0.0.0/24 -j ACCEPT || true
+PostDown = iptables -D FORWARD -i $WAN_INTERFACE -o %i -d 10.0.0.0/24 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT || true
+PostDown = iptables -t nat -D POSTROUTING -s 10.0.0.0/24 -o $WAN_INTERFACE -j MASQUERADE || true
 EOF
 unset PRIVATE_KEY
 if $IPV6; then
