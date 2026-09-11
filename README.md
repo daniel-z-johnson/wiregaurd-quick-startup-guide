@@ -1,6 +1,31 @@
 # wireguard-quick-startup-guide
 
 ## Server Setup
+
+### Automated Setup (Recommended)
+For a quick and easy setup, use the provided automation script:
+
+1. Get a server (Linode, Digital Ocean, etc.) - you only need a small $5/month server
+2. Use Ubuntu 20.04 or later as your OS
+3. __Secure the Server__ first - follow a server hardening guide
+4. Download and run the setup script:
+   ```bash
+   wget https://raw.githubusercontent.com/daniel-z-johnson/wireguard-quick-startup-guide/main/setup-wireguard.sh
+   chmod +x setup-wireguard.sh
+   sudo ./setup-wireguard.sh
+   ```
+5. The script will:
+   - Update and upgrade your system
+   - Install WireGuard
+   - Generate private and public keys
+   - Set up the initial wg0.conf configuration
+   - Enable IP forwarding
+   - Enable and start the WireGuard service
+6. Save the public key displayed at the end - you'll need it for client setup
+7. Reboot if the script indicates it's required
+8. Continue to the [Client Setup](#client-setup) section
+
+### Manual Setup
 1. Get a server, services you can use include Linode, Digital Ocean, and many others
 2. You only need a very small server, I chose the cheapest one that was only $5 a month when I did my setup and it worked fine
 3. I used Ubuntu for my OS (Ubuntu 20.04 or later recommended)
